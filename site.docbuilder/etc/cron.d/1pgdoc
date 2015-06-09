@@ -1,0 +1,5 @@
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/python34/bin
+MAILTO=pgdoc
+HOME=/home/pgdoc/gitrep
+*/10 * * * * pgdoc /home/pgdoc/gitrep/autobuild.sh  >>/home/pgdoc/gitrep/autobuild.log 2>&1
