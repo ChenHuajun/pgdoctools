@@ -7,6 +7,7 @@ cd pgdoc-cn
 
 perl tools/encoding_convert.pl
 cd build/doc
+echo sed -e 's/\$\{updatedate\}/'`date +%Y-%m-%d`'/' -i src/sgml/pgdoccn-notes.sgml|sh
 gmake html
 
 cd ../../tools

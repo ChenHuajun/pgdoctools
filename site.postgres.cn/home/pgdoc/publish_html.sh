@@ -1,7 +1,21 @@
 #!/bin/bash
 
-rm -rf /var/www/html/docs/9.3bak
-mv /var/www/html/docs/9.3 /var/www/html/docs/9.3bak
-cp -rf  html_out /var/www/html/docs/9.3
-rm -rf /var/www/html/docs/9.3bak
+if [ ! $# -eq 1 ]
+then
+ echo "Usage: $0 pgversion"
+ exit -1
+fi
+
+PGVERSION=$1
+
+if [ ! -d $PGVERSION ]
+then
+ echo "Directory $PGVERSION does not exsits"
+ exit -1
+fi
+
+rm -rf /var/www/html/docs/${PGVERSION}bak
+mv /var/www/html/docs/${PGVERSION} /var/www/html/docs/${PGVERSION}bak
+cp -rf  ${PGVERSION} /var/www/html/docs/${PGVERSION}
+rm -rf /var/www/html/docs/${PGVERSION}bak
 
