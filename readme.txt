@@ -1,19 +1,39 @@
+ï»¿
+1)æ£€æŸ¥ç¼–è¯‘é”™è¯¯
+æŸ¥çœ‹å¹¶ä¿®å¤build.logä¸­çš„ç¼–è¯‘é”™è¯¯
 
-1)²é¿´9.3Ğ£¶ÔµÄwiki¸üĞÂ
-½øÈëdocbuilder
-./updatecheck93wiki.sh
 
-2)Éú³ÉÀëÏßhtmlºÍpdfÎÄµµ
-2.1 ½øÈëdocbuilderÖ´ĞĞ
+2)ç”Ÿæˆç¦»çº¿html
+2.1 è¿›å…¥docbuilderæ‰§è¡Œ
+su - pgdoc
+
+2.2 ä¿®æ”¹å‘å¸ƒæ–‡ä»¶å
+vi release.sh
+...
+release_name=PostgreSQL9.5.3-CN-v1.0
+htmlfilename=PostgreSQL9.5.3-CN-HTML-v1.0
+
+2.3 æ‰§è¡Œå‘å¸ƒè„šæœ¬
 ./release.sh
 
-2.2 ¿½±´ÒÔÏÂÎÄ¼şµ½WindowsµÄsgml2pdfÄ¿Â¼
+2.2 æ‹·è´ä»¥ä¸‹æ–‡ä»¶åˆ°Windowsçš„sgml2pdfç›®å½•
 PostgreSQLx.y.z-CN-HTML-v1.x.tar.gz
+PostgreSQLx.y.z-CN-v1.0.hhc
+PostgreSQLx.y.z-CN-v1.0.hhk
 postgres-A4.tex-pdf.gz
 
-2.3 ½øÈësgml2pdfÄ¿Â¼½âÑ¹postgres-A4.tex-pdf.gz
+3)ç”Ÿæˆpdfæ–‡æ¡£
 
-2.4 Ö´ĞĞÒÔÏÂÎÄ¼ş
+3.1 è¿›å…¥sgml2pdfç›®å½•è§£å‹postgres-A4.tex-pdf.gz
+
+3.2 æ‰§è¡Œä»¥ä¸‹æ–‡ä»¶
 run.bat
 
-2.4 ÓÃORPALIS PDF Reducer¸øÉú³ÉµÄpdfÊİÉí
+3.3 ç”¨ORPALIS PDF Reducerç»™ç”Ÿæˆçš„pdfç˜¦èº«
+
+4)ç”Ÿæˆchmæ–‡æ¡£
+4.1 è§£å‹PostgreSQLx.y.z-CN-HTML-v1.x.tar.gzç„¶åå°†PostgreSQLx.y.z-CN-HTML-v1.xç›®å½•æ”¹åä¸ºç§»åŠ¨html
+
+4.2 å‚è€ƒä»¥ä¸‹æ­¥éª¤ç”Ÿæˆchmæ–‡ä»¶
+https://github.com/ChenHuajun/gen_pgdoc_chm/blob/master/README.md
+
