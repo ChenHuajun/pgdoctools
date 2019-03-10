@@ -1,0 +1,41 @@
+
+diffcount v1.0.06
+  - Fix a big leakiness of memory problem
+  - Change output style of --print-files-info
+  - Improve the support for complex comment
+  - Improve the interface for program reading
+  - Add Verilog support	
+
+diffcount v1.0.05
+  - Add interface for IPM reading result
+  - Change style of command line output
+  - Change Languages definition as SPR Lang_Tab 2003
+  - Add some chip script types for zte corp.
+  - Fix some memory problems.
+
+diffcount v1.0.03
+  - change codes architecture
+  - abstract the command line interface
+  - Fix Bug:defect in language type pattern
+  - Optimize a differ process
+
+
+diffcount v1.0.02
+  - Fix Bug: code added/modifed inside block comment,
+             was ignored by analysis process.
+  - Change standard c code rate to ZTE corp's rules. 
+  - Fix Bug: foolish case without break bug.
+  
+
+diffcount v1.0.01
+  - provide the command line interface
+  - count source package and output NBNC lines
+  - compare two source package and count diff part
+    output NBNC lines of diff part
+  - convert final NBNC lines to standard C language
+  - support: c/c++ pascal asm java basic asm tcl/tk
+             perl c# ini/conf  
+
+     
+     
+        

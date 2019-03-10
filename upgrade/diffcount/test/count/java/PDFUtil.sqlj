@@ -1,0 +1,111 @@
+package com.zte.ums.womcn.osf.cm.service;
+
+import com.zte.ums.cap.cm.dbcp.sqlj.api.AbstractSQLJHandle;
+import com.zte.ums.csp.mml.common.CLISException;
+import com.zte.ums.cap.cm.dbcp.sqlj.api.SQLJHandleCommon;
+
+import java.sql.*;
+import java.util.*;
+
+#sql iterator IterLocation(Integer);
+
+
+
+public class PDFUtil {
+	
+	
+	/**
+	   * 动态生成SQL的Set子句
+	   * @param hm 需要拼成子句的HashMap
+	   * @return setClause 返回set子句字符串
+	   */ 
+	  
+	  public static String getSetClause(HashMap hm){
+		  
+		  String setString = "MOI = 'MOI',";
+		  
+		  String tempKey = null;
+		  
+		  Iterator it = hm.keySet().iterator();
+		  
+		  while(it.hasNext()){
+			  
+			  tempKey = it.next().toString();
+			  
+			  if ( hm.get(tempKey) != null && !hm.get(tempKey).toString().equals("-1") ){
+				  
+				  if(hm.get(tempKey) instanceof String){
+					  
+					  setString += tempKey + "='" + hm.get(tempKey).toString().replace('\'', '.') + "'," ;
+					  
+				  }else if ( hm.get(tempKey) instanceof Long ){
+				  
+				      setString += tempKey + "=" + Long.parseLong(hm.get(tempKey).toString()) + "," ;					  
+					  
+				  }else{
+					  
+					  setString += tempKey + "=" + Integer.parseInt(hm.get(tempKey).toString()) + "," ;
+
+					  
+				  }
+			  }
+
+			  
+			  
+		  }
+		  
+		  
+		  setString = setString.trim().substring(0,setString.length()-1);
+		  
+		  return setString;		  
+		  
+	  }  
+	  
+		/**
+	   * 动态生成SQL的where子句
+	   * @param hm 需要拼成子句的HashMap
+	   * @return setClause 返回where子句字符串
+	   */ 
+	  
+	  public static String getWhereClause(HashMap hm){
+		  
+		  String whereString = "1=1 and ";
+		  
+		  String tempKey = null;
+		  
+		  Iterator it = hm.keySet().iterator();
+		  
+		  while(it.hasNext()){
+			  
+			  tempKey = it.next().toString();
+			  
+			  if ( hm.get(tempKey) != null && !hm.get(tempKey).toString().equals("-1") ){
+
+				if(hm.get(tempKey) instanceof String){
+					
+					whereString += tempKey + "='" + hm.get(tempKey).toString().replace('\'', '.') + "' and " ;
+					
+				}else if ( hm.get(tempKey) instanceof Long ){
+				
+				    whereString += tempKey + "=" + Long.parseLong(hm.get(tempKey).toString()) + " and " ;						
+					
+				}else{
+					
+					whereString += tempKey + "=" + Integer.parseInt(hm.get(tempKey).toString()) + " and " ;
+					
+				}
+				
+				  				  
+			  }
+			  
+		  }
+		  
+		  whereString = whereString.trim().substring(0,whereString.length()-5);
+		  
+		  return whereString;		  
+		  
+	  }   
+	  
+
+  	  
+  

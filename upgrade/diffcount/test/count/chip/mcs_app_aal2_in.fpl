@@ -1,0 +1,173 @@
+/**************************************************************************
+ *  版权所有 (C)2006，深圳市中兴通讯股份有限公司。
+ *
+ *  文件名称：   mcs_app_aal2_in.fpl
+ *  文件标识：
+ *  内容摘要：   APP530子系统 
+ *  其他说明：
+ *  当前版本：   0.1
+ *  作者：       
+ *  完成日期：
+ *  修改日志：
+ *  修改记录 1 --修 改 人： 张书钦    修改日期：2006-9-15
+ *              修改原因： CTRCR00109816   MICP单板AAL2处理路径异常
+ *  修改记录 2 --修 改 人： 朱明       修改日期：2006-10-11
+ *              修改原因：   CTRCR00116031 V05.03.21_WRNC_010 支持ALCAP over SCTP请求合入微码部分功能 
+ *  修改记录 4 --修 改 人： 张书钦       修改日期：2006-10-13
+ *              修改原因： CTRCR00114300 APP530中交换信元统计错误，暨Tree表查表错误整改。 
+ *  修改记录 5 --修 改 人： seatree   修改日期：2006-11-11
+ *              修改原因： CTRCR00095784  APBE_2性能统计不正确
+ *  修改记录 6 --修 改 人：张书钦   修改日期：2006-11-21
+ *              修改原因： CTRCR00146230暨Global Register整改    
+ *  修改记录 7 --修 改 人：zhmf   修改日期：2006-12-5
+ *              修改原因： CTRCR00153129 增加统计    
+ *  修改记录 8 --修 改 人：zhangmf   修改日期：2007-4-17
+ *              修改原因：  CTRCR00238617 ATM接口板媒体面以太网封装接口的变更
+ *  修改记录 9 --修 改 人：seatree   修改日期：2007-4-20
+ *              修改原因：  CTRCR00242624 FE口正常报文被当作mac地址错误而丢弃
+ *  修改记录 10--修 改 人： 潘峰     修改日期：2007-04-20
+ *              修改原因： CTRCR00167624 aPBE2主备方案完善
+ *  修改记录 11--修 改 人：刘和洋      修改日期：2007-06-13 
+ *              修改原因： CTRCR00273936  AAL2入网元P1_Queue_CPS_from_APP100缺少统计信息
+ *  修改记录 12--修 改 人：刘和洋    修改日期：2007-7-11
+ *              修改原因：  CTRCR00285544 APBE_2上反复删建接续关系表时出现错误
+ *  修改记录 13--修 改 人： zhengmf    修改日期：2007-07-26
+ *              修改原因： CTRCR00281407 APBE_2性能优化
+ *  修改记录 14--修 改 人： zhengmf    修改日期：2007-07-26
+ *              修改原因： CTRCR00272486 心跳检测异常
+ *  修改记录 15--修 改 人： liuyj    修改日期：2007-07-27
+ *              修改原因： CTRCR00304980  tree表的模式转化与定义不一致. 
+ *  修改记录 16--修 改 人： zhangmf   修改日期：2007-09-21
+ *              修改原因： CRDCR00030435 修改与RNC的接口
+ *  修改记录 17--修 改 人： mayanqiang      修改日期：2007-10-11
+ *              修改原因： CRDCR00011324  DID分配策略整改
+ *  修改记录 18--修 改 人： mayanqiang   修改日期：2007-10-30
+ *               修改原因：  CTRCR00324321  V05.03.50_WRNC_007 支持IUB口无线网络用户实例的传输诊断测试功能
+ **************************************************************************/
+
+
+/***********************************************************************
+ * P1_AAL2_UP_IN_Proc()
+ * First Pass
+ * Strip Cell Header, and Send to Second Pass. 
+ * 
+ ***********************************************************************/
+P1_AAL2_UP_IN_Proc:
+       asiIncrement32(AAL2_BASE:AAL2_BASE_WIDTH, P1_AAL2_UPIN_QUEUEEOF_CNT:AAL2_CNT_WIDTH, 0:2) 
+       vpi = fShift(P1GR_ATM_VPIVCI_N5:24, 1:1, 16:5)
+       fQueueEOF(1:2, P1GR_ATM_PDUID_N3:19, ATM_CELL_OFFSET:6, 0:1, 0:1, $framerErr:1, 0:1, $vpi:3,P1GR_ATM_VPIVCI_N5:16 ,0:1, AAL2_UP_In_Cell_TAG );
+
+
+/***********************************************************************
+ * P1_AAL2_UP_In_CpsPkt_Proc()
+ * First Pass
+ * Assamble Cps Pkt to SSSAR SDU
+ * Input: $framerSOF:1, $framerEOF:1
+ ***********************************************************************/
+P1_AAL2_UP_In_CpsPkt_Proc:
+        BITS:2        
+        asiIncrement32(AAL2_BASE:AAL2_BASE_WIDTH, P1_AAL2_UPIN_CPSPKT_CNT:AAL2_CNT_WIDTH, 0:2) 
+        fSkip(12)
+        vppOutDid = fExtract(20)
+        fSetGlobal(P1GR_VPP_Output_DID_N2, $vppOutDid:11)
+        cid = fExtract(8)
+        pduId = VppCpsParser_OutputTbl($vppOutDid:11, $cid:8 )
+        Tree_RtnRealValidate($pduId:24, 1:1, VPPCPSPARSER_OUTPUTTBL_ERR_CNT:8) 
+        fSetGlobal(P1GR_VPP_Output_PDUID_N1, $pduId:24)
+	    fSkip(6)
+	    uui = fExtract(5)
+	    P1_Queue_CPS_from_APP100($uui:5,$cid:8);      
+
+
+
+	       
+/***********************************************************************
+ * P1_Queue_CPS_from_APP100
+ * Send Cps to Queue 
+ * Input:  
+ ***********************************************************************/
+P1_Queue_CPS_from_APP100:
+        27:5
+        fSkip(8)
+        asiIncrement32(AAL2_BASE:AAL2_BASE_WIDTH, P1_AAL2_UPIN_CPSPKT_QUEUE_CNT:AAL2_CNT_WIDTH, 0:2) 
+        offset1 = fAdd($offset:16, 7:16)        
+        fQueue(1:2,P1GR_VPP_Output_PDUID_N1:19,$offset1:6,0:1,0:1,$framerErr:1);
+
+P1_Queue_CPS_from_APP100:
+        26:5
+        cid = fExtract(8)
+        asiIncrement32(AAL2_BASE:AAL2_BASE_WIDTH, P1_AAL2_UPIN_CPSPKT_QUEUEEOF_CNT:AAL2_CNT_WIDTH, 0:2) 
+        offset1 = fAdd($offset:16, 7:16)        
+        fQueueEOF(1:2,P1GR_VPP_Output_PDUID_N1:19,$offset1:6,0:1,0:1,$framerErr:1, 0:1, P1GR_VPP_Output_DID_N2:11, $cid:8, 0:1, AAL2_UP_In_CpsPkt_TAG); 
+
+P1_Queue_CPS_from_APP100:
+        BITS:5
+        fSkip(8)
+	asiIncrement32(AAL2_BASE:AAL2_BASE_WIDTH, P1_AAL2_UPIN_CPSPKT_QUEUEERROR_CNT:AAL2_CNT_WIDTH, 0:2)
+        P1_Terminate();  
+
+
+
+
+/**********************************************************************
+ * P2_AAL2_UP_In_Cell_Proc
+ * Send Cell to tm 
+ * Input:  
+ ***********************************************************************/
+P2_AAL2_UP_In_Cell_Proc:
+        asiIncrement32(AAL2_BASE:AAL2_BASE_WIDTH, P1_AAL2_UPIN_CELL_TRANSMIT_CNT:AAL2_CNT_WIDTH, 0:2) 
+        vpiandvci =  fShift($Tag:24, 1:1, 5:5) 
+        vpi =  fShift($vpiandvci:24, 1:1, 16:5)
+        did = VppCpsParser_InputTbl( $vpi:3, $vpiandvci:16 )  
+        Tree_RtnRealValidate($did:24, 1:1, VPPCPSPARSER_INPUTTBL_ERR_CNT:8) 
+	      fSkipToEnd()  					// Go to end of PDU and verify checksum
+	      fTransmit(0x0:1, 0x0:1, $did:20, 0:16, 0x6:5, 0x0:1, 0x0:9, 0x0:24);
+   
+	      
+/***********************************************************************
+ * P2_AAL2_UP_In_CpsPkt_Proc:
+ * 
+ * Input:  
+ ***********************************************************************/	      
+P2_AAL2_UP_In_CpsPkt_Proc:   // RNTI? where from?
+        asiIncrement32(AAL2_BASE:AAL2_BASE_WIDTH, P2_AAL2_UPIN_SSSAR_REASMB_CNT:AAL2_CNT_WIDTH, 0:2) 
+        outputDid =  fShift($Tag:24, 1:1, 13:5)     // Shift right to get 11bit OUTPUTDID
+        didcid =  fShift($Tag:24, 1:1, 5:5) 
+        fSetGlobal(P2GR_AAL2IN_OUTPUTDID_N1, $outputDid:24)
+        inVpivci = Regress_AAL2LinkInfoTbl(P2GR_AAL2IN_OUTPUTDID_N1:11)
+        Tree_RtnVirtualRealValidate(@inVpivci:24, $inVpivci:24, 1:1, REGRESS_AAL2LINKINFOTBL_ERR_CNT:8)
+        fSetGlobal(P2GR_AAL2_VPIVCI_N2, $inVpivci:24)
+        fSetGlobal(P2GR_AAL2_CID_N3, $didcid:8)
+                
+#ifdef APP530_RAP        	
+        interfaceType = ATM_VC_InterfaceTypeTbl(P2GR_AAL2_VPIVCI_N2:28)
+        Tree_RtnRealValidate($interfaceType:24, 1:1, ATM_VC_INTERFACETYPETBL_ERR_CNT:8 )
+        P2_Aal2CheckIF($interfaceType:4)
+
+        addrtype = Aal2AddrTypeTbl($outputDid:11,$didcid:8) 
+        Tree_RtnRealValidate($addrtype:24, 1:1, AAL2ADDRTYPETBL_ERR_CNT:8) 
+        fSetGlobal(P2GR_AAL2_LINKTYPE_N6, $addrtype:24)
+        ADDRTYPE_Proc($addrtype:2, $interfaceType:4);    	
+#else
+        Vc2IP_Proc();
+#endif
+
+#ifdef APP530_RAP 
+P2_Aal2CheckIF:
+        INTER_RIBP:4
+        asiIncrement32(AAL2_BASE:AAL2_BASE_WIDTH, P2_AAL2_UPIN_RIBP_CNT:AAL2_CNT_WIDTH, 0:2)         
+        fReturn(RIBP_PDTYPE_KEY:16); 
+P2_Aal2CheckIF:
+        INTER_RICP:4
+        asiIncrement32(AAL2_BASE:AAL2_BASE_WIDTH, P2_AAL2_UPIN_RICP_CNT:AAL2_CNT_WIDTH, 0:2)        
+        fReturn(RICP_PDTYPE_KEY:16) ;           
+P2_Aal2CheckIF:
+        INTER_RIRP:4
+        asiIncrement32(AAL2_BASE:AAL2_BASE_WIDTH, P2_AAL2_UPIN_RIRP_CNT:AAL2_CNT_WIDTH, 0:2)        
+        fReturn(RIRP_PDTYPE_KEY:16) ;        
+P2_Aal2CheckIF:
+        BITS:4  
+        asiIncrement32(AAL2_BASE:AAL2_BASE_WIDTH, P2_AAL2_UPIN_UNKNOWNIF_CNT:AAL2_CNT_WIDTH, 0:2)        
+        P2_Terminate(); 
+#endif
+        
