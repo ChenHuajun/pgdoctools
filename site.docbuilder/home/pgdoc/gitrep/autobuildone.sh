@@ -16,7 +16,7 @@ then
 fi
 
 echo "#### build pgdoc at" `date "+%F %H:%M:%S"` >build.log
-./builddoc.sh >>build.log 2>&1
+./builddoc.sh $PGVERSION >>build.log 2>&1
 if [ ! $? -eq 0 ]
 then
  echo "build failed!" 
@@ -27,4 +27,4 @@ fi
 echo "build successed!"
 
 ./publish.sh $PGVERSION
-scp build.log postgres:/var/www/html/docs/${PGVERSION}/build.log
+scp build.log postgres.cn:/var/www/html/docs/${PGVERSION}/build.log
