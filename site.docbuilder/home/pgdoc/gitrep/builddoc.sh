@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ ! $# -eq 1 ]
 then
  echo "Usage: $0 pgversion"
@@ -23,7 +25,10 @@ rm -rf pgdoc-cn/tools/html_out
 
 cd pgdoc-cn
 
-# perl tools/encoding_convert.pl
+if [[ "9.3 9.4 9.5 9.6" =~ "$PGVERSION" ]]
+then
+ perl tools/encoding_convert.pl
+fi
 cd build/doc
 echo sed -e 's/\$\{updatedate\}/'`date +%Y-%m-%d`'/' -i src/sgml/pgdoccn-notes.sgml|sh
 gmake html

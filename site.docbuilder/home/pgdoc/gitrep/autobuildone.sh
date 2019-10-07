@@ -1,15 +1,15 @@
 #/bin/bash
 
-if [ ! $# -eq 1 ]
+if [ $# -lt 1 ]
 then
- echo "Usage: $0 pgversion"
+ echo "Usage: $0 pgversion [-f]"
  exit -1
 fi
 
 PGVERSION=$1
 
 ./check_github_update.sh $PGVERSION
-if [ ! $? -eq 100 ]
+if [ $? -ne 100 -a "$2" != "-f" ]
 then
 # no update from github
   exit 1
