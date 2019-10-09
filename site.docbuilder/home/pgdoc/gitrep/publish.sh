@@ -14,7 +14,7 @@ then
  exit 1
 fi
 
-rsync  -r html_out/* postgres.cn:$PGVERSION
+rsync --delete -azr html_out/ postgres.cn:{$PGVERSION}/
 if [ ! $? -eq 0 ]
 then 
  echo "rsync failed!"
