@@ -19,3 +19,7 @@ mv /var/www/html/docs/${PGVERSION} /var/www/html/docs/${PGVERSION}bak
 cp -rf  ${PGVERSION} /var/www/html/docs/${PGVERSION}
 rm -rf /var/www/html/docs/${PGVERSION}bak
 
+#更新全文检索索引
+cd /var/www/html
+php index.php v2 doc_search prepare ${PGVERSION}
+
