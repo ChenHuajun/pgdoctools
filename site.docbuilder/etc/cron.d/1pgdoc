@@ -2,4 +2,5 @@ SHELL=/bin/bash
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/python34/bin
 MAILTO=pgdoc
 HOME=/home/pgdoc/gitrep
-*/10 * * * * pgdoc /home/pgdoc/gitrep/autobuild.sh  >>/home/pgdoc/gitrep/autobuild.log 2>&1
+# git-remote-https(git fetch) 可能会阻塞在select /etc/pki/nssdb/cert9.db上导致大量脚本进程残留(应该是哪边的bug)
+*/10 * * * * pgdoc /home/pgdoc/gitrep/autobuild.sh  >>/home/pgdoc/gitrep/autobuild.log 2>&1 && killall git-remote-https
