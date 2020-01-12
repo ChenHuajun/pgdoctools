@@ -20,7 +20,7 @@ echo "#### build pgdoc at" `date "+%F %H:%M:%S"` >build.log
 if [ ! $? -eq 0 ]
 then
  echo "build failed!" 
-  scp build.log postgres:/var/www/html/docs/${PGVERSION}/build.log
+  scp build.log postgres.cn:/var/www/html/docs/${PGVERSION}/build.log
   exit 2
 fi
 
