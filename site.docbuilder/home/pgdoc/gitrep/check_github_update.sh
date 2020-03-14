@@ -10,7 +10,7 @@ PGVERSION=$1
 
 cd pgdoc-cn
 git fetch origin
-if [ "$PGVERSION" = "11" ]
+if [ "$PGVERSION" = "12" ]
 then
   BRANCH="master"
 else
