@@ -15,7 +15,11 @@ then
 fi
 
 rm -rf /var/www/html/docs/${PGVERSION}bak
-mv /var/www/html/docs/${PGVERSION} /var/www/html/docs/${PGVERSION}bak
+if [ -d /var/www/html/docs/${PGVERSION} ]
+then
+ mv /var/www/html/docs/${PGVERSION} /var/www/html/docs/${PGVERSION}bak
+fi
+
 cp -rf  ${PGVERSION} /var/www/html/docs/${PGVERSION}
 rm -rf /var/www/html/docs/${PGVERSION}bak
 

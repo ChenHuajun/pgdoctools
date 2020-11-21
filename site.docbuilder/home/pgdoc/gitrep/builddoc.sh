@@ -34,6 +34,7 @@ echo sed -e 's/\$\{updatedate\}/'`date +%Y-%m-%d`'/' -i src/sgml/pgdoccn-notes.s
 gmake html
 
 cd ../../tools
-python3 add_edit_link.py >/dev/null
+python3 add_edit_link.py -c "$PGVERSION" -m 13 -a '9.3,9.4,9.5,9.6,10,11,12,13' >/dev/null
 mv html_out ../../
+
 

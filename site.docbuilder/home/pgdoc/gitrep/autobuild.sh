@@ -17,3 +17,6 @@ echo "#### build 11"
 
 echo "#### build 12"
 ./autobuildone.sh 12
+
+echo "#### build 13"
+./autobuildone.sh 13
